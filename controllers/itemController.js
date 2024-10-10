@@ -1,72 +1,64 @@
-const Item = require('../models/item');
-const Category = require('../models/category');
+const Item = require('../models/item'); // Asegúrate de que estás importando el modelo de item
 
-// Mostrar todos los items
+// Obtener todos los items
 exports.getItems = async (req, res) => {
   try {
     const items = await Item.findAll();
-    res.render('items', { items });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al obtener los items');
+    res.render('items/index', { items });
+  } catch (error) {
+    res.status(500).send({ message: 'Error al obtener los items', error });
   }
 };
 
-// Mostrar un item específico
+// Obtener un item por ID
 exports.getItem = async (req, res) => {
   try {
-    const item = await Item.findByPk(req.params.id, {
-      include: 'category', // Relacionar con la categoría
-    });
+    const item = await Item.findByPk(req.params.id);
     if (!item) {
-      return res.status(404).send('Item no encontrado');
+      return res.status(404).send({ message: 'Item no encontrado' });
     }
-    res.render('item', { item });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al obtener el item');
+    res.render('items/show', { item });
+  } catch (error) {
+    res.status(500).send({ message: 'Error al obtener el item', error });
   }
 };
 
 // Crear un nuevo item
 exports.createItem = async (req, res) => {
   try {
-    const { name, price, categoryId } = req.body;
-    const newItem = await Item.create({ name, price, categoryId });
-    res.redirect('/items');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al crear el item');
+    const { name, categoryId, description, price } = req.body;
+    const newItem = await Item.create({ name, categoryId, description, price });
+    res.redirect(`/items/${newItem.id}`);
+  } catch (error) {
+    res.status(500).send({ message: 'Error al crear el item', error });
   }
 };
 
-// Editar un item existente
+// Actualizar un item por ID
 exports.updateItem = async (req, res) => {
   try {
-    const { name, price, categoryId } = req.body;
+    const { name, categoryId, description, price } = req.body;
     const item = await Item.findByPk(req.params.id);
     if (!item) {
-      return res.status(404).send('Item no encontrado');
+      return res.status(404).send({ message: 'Item no encontrado' });
     }
-    await item.update({ name, price, categoryId });
-    res.redirect('/items');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al actualizar el item');
+    await item.update({ name, categoryId, description, price });
+    res.redirect(`/items/${item.id}`);
+  } catch (error) {
+    res.status(500).send({ message: 'Error al actualizar el item', error });
   }
 };
 
-// Eliminar un item
+// Eliminar un item por ID
 exports.deleteItem = async (req, res) => {
   try {
     const item = await Item.findByPk(req.params.id);
     if (!item) {
-      return res.status(404).send('Item no encontrado');
+      return res.status(404).send({ message: 'Item no encontrado' });
     }
     await item.destroy();
     res.redirect('/items');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error al eliminar el item');
+  } catch (error) {
+    res.status(500).send({ message: 'Error al eliminar el item', error });
   }
 };
