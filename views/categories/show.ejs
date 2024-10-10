@@ -1,0 +1,6 @@
+<h1>Items in <% Category.name %></h1>
+<ul>
+  <% items.forEach(item => { %>
+    <li><%= item.name %> - Amount: <% item.quantity %></li>
+  <% }); %>
+</ul>
