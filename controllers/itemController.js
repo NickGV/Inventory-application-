@@ -1,72 +1,72 @@
-const { Item, Category } = require("../models");
+const Item = require('../models/item');
+const Category = require('../models/category');
 
+// Mostrar todos los items
 exports.getItems = async (req, res) => {
   try {
     const items = await Item.findAll();
-    res.status(200).json({ items });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.render('items', { items });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al obtener los items');
   }
 };
 
-exports.getItemsByCategory = async (req, res) => {
+// Mostrar un item específico
+exports.getItem = async (req, res) => {
   try {
-    const category = await Category.FindByPk(req.params.categoryId, {
-      include: [Item],
+    const item = await Item.findByPk(req.params.id, {
+      include: 'category', // Relacionar con la categoría
     });
-    if (!category) {
-      return res.status(404).json({ error: "Category not found" });
-    }
-    res.status(200).json(category.Items);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-exports.getItemById = async (req, res) => {
-  try {
-    const item = await Item.findByPk(req.params.id);
     if (!item) {
-      return res.status(404).json({ error: "Item not found" });
+      return res.status(404).send('Item no encontrado');
     }
-    res.status(200).json({ item });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.render('item', { item });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al obtener el item');
   }
 };
 
+// Crear un nuevo item
 exports.createItem = async (req, res) => {
   try {
-    const item = req.body;
-    const newItem = await Item.create(item);
-    res.status(201).json(newItem);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+    const { name, price, categoryId } = req.body;
+    const newItem = await Item.create({ name, price, categoryId });
+    res.redirect('/items');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al crear el item');
   }
 };
 
+// Editar un item existente
 exports.updateItem = async (req, res) => {
   try {
+    const { name, price, categoryId } = req.body;
     const item = await Item.findByPk(req.params.id);
     if (!item) {
-      return res.status(404).json({ error: "Item not found" });
+      return res.status(404).send('Item no encontrado');
     }
-    await item.update(req.body);
-    res.status(200).json({ item });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    await item.update({ name, price, categoryId });
+    res.redirect('/items');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al actualizar el item');
   }
 };
 
+// Eliminar un item
 exports.deleteItem = async (req, res) => {
   try {
     const item = await Item.findByPk(req.params.id);
     if (!item) {
-      return res.status(404).json({ error: "Item not found" });
+      return res.status(404).send('Item no encontrado');
     }
     await item.destroy();
-    res.status(200).json({ message: "Item deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.redirect('/items');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al eliminar el item');
   }
-}
+};

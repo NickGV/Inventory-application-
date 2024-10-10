@@ -1,56 +1,71 @@
-const { Category } = require("../models");
+const Category = require('../models/category');
 
+// Mostrar todas las categorías
 exports.getCategories = async (req, res) => {
   try {
-    const categories = await Category.findAll();
-    res.status(200).json({ categories });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    const categories = await Category.findAll(); // Obtenemos todas las categorías
+    res.render('categories', { categories }); // Renderizamos la vista 'categories.ejs'
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al obtener las categorías');
   }
 };
 
-exports.getCategoryById = async (req, res) => {
-  const id = req.params.id;
+// Mostrar una categoría específica y sus items
+exports.getCategory = async (req, res) => {
   try {
-    const category = await Category.findByPk(id);
-    res.status(200).json({ category });
-  } catch (error) {
-    res.status(404).json({ error: error.message });
+    const category = await Category.findByPk(req.params.id, {
+      include: 'items', // Asegúrate de que esto funciona según tus asociaciones
+    });
+    if (!category) {
+      return res.status(404).send('Categoría no encontrada');
+    }
+    res.render('category', { category }); // Renderizamos la vista 'category.ejs'
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al obtener la categoría');
   }
 };
 
+// Crear una nueva categoría
 exports.createCategory = async (req, res) => {
-  const category = req.body;
   try {
-    const newCategory = await Category.create(category);
-    res.redirect("/categories");
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+    const { name } = req.body;
+    const newCategory = await Category.create({ name });
+    res.redirect('/categories'); // Redirigimos a la vista de categorías
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al crear la categoría');
   }
 };
 
+// Editar una categoría existente
 exports.updateCategory = async (req, res) => {
   try {
+    const { name } = req.body;
     const category = await Category.findByPk(req.params.id);
     if (!category) {
-      return res.status(404).json({ error: "Category not found" });
+      return res.status(404).send('Categoría no encontrada');
     }
-    await category.update(req.body);
-    res.status(200).json({ category });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    await category.update({ name });
+    res.redirect('/categories');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al actualizar la categoría');
   }
 };
 
+// Eliminar una categoría
 exports.deleteCategory = async (req, res) => {
   try {
     const category = await Category.findByPk(req.params.id);
     if (!category) {
-      return res.status(404).json({ error: "Category not found" });
+      return res.status(404).send('Categoría no encontrada');
     }
     await category.destroy();
-    res.status(200).json({ message: "Category deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.redirect('/categories');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error al eliminar la categoría');
   }
 };
