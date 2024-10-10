@@ -3,7 +3,7 @@ const { Category } = require("../models");
 exports.getCategories = async (req, res) => {
   try {
     const categories = await Category.findAll();
-    res.render("categories/index", { categories });
+    res.status(200).json({ categories });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -13,7 +13,7 @@ exports.getCategoryById = async (req, res) => {
   const id = req.params.id;
   try {
     const category = await Category.findByPk(id);
-    res.render("categories/show", { category });
+    res.status(200).json({ category });
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
