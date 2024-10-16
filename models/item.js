@@ -1,26 +1,38 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Item extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
-    }
-  }
-  Item.init({
-    name: DataTypes.STRING,
-    quantity: DataTypes.INTEGER,
-    description: DataTypes.STRING,
-    CategoryId: DataTypes.INTEGER
+  const Item = sequelize.define('Item', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true, // Puede ser nulo
+    },
+    price: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: true, // Puede ser nulo si no está asignado a una categoría
+      references: {
+        model: 'Category',
+        key: 'id',
+      },
+    },
   }, {
-    sequelize,
-    modelName: 'Item',
+    tableName: 'items',
+    timestamps: true, // Para asegurar que Sequelize maneje `createdAt` y `updatedAt`
   });
+
+  // Definir la relación con Category
+  Item.associate = function(models) {
+    Item.belongsTo(models.Category, {
+      foreignKey: 'categoryId',
+      as: 'category',
+    });
+  };
+
   return Item;
 };
