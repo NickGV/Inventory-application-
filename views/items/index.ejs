@@ -1,0 +1,15 @@
+<h1>Lista de Items</h1>
+<a href="/items/new">Crear nuevo item</a>
+<% items.forEach(function(item) { %>
+  <div>
+    <h2><%= item.name %></h2>
+    <p><%= item.description %></p>
+    <p>Price: <%= item.price %></p>
+    <p>Category: <%= item.Category ? item.Category.name : 'N/A' %></p>
+    <a href="/items/<%= item.id %>">Ver detalles</a>
+    <a href="/items/<%= item.id %>/edit">Editar</a>
+    <form action="/items/<%= item.id %>?_method=DELETE" method="POST">
+      <button type="submit">Eliminar</button>
+    </form>
+  </div>
+<% }); %>
