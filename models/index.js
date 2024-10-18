@@ -1,5 +1,6 @@
 const { Sequelize } = require('sequelize');
-const config = require('../config/config'); // Importa la configuración
+const config = require('../config/config');
+
 const sequelize = new Sequelize(
   config.development.database,
   config.development.username,
@@ -11,14 +12,18 @@ const sequelize = new Sequelize(
   }
 );
 
-const Category = require('./category');
-const Item = require('./item');
+const db = {};
 
-Item.belongsTo(Category, { foreignKey: 'CategoryId' });
-Category.hasMany(Item, { foreignKey: 'CategoryId' });
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-module.exports = {
-  sequelize,
-  Category,
-  Item
-};
+db.Category = require('./category')(sequelize, Sequelize.DataTypes);
+db.Item = require('./item')(sequelize, Sequelize.DataTypes);
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+module.exports = db;

@@ -1,6 +1,5 @@
-const Item = require("../models/item");
-const Category = require("../models/category");
-
+const db = require("../models");
+const { Category, Item } = db;
 exports.getItems = async (req, res) => {
   try {
     const items = await Item.findAll({ include: Category });
