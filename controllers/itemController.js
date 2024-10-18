@@ -1,16 +1,20 @@
-const db = require('../models');
+const db = require("../models");
 const Item = db.Item;
 const Category = db.Category;
 
 exports.getItems = async (req, res) => {
   try {
-    const items = await Item.findAll({ include: Category });
+    const items = await Item.findAll({
+      include: [{ model: Category, as: "category" }],
+    });
     res.render("items/index", { items });
   } catch (error) {
-    res.status(500).send({ message: "Error al obtener los items", error });
+    console.error(error);
+    res
+      .status(500)
+      .send({ message: "Error al obtener los items", error: error.message });
   }
 };
-
 exports.getItem = async (req, res) => {
   try {
     const item = await Item.findByPk(req.params.id, { include: Category });
@@ -51,7 +55,9 @@ exports.updateItemForm = async (req, res) => {
     }
     res.render("items/edit", { item, categories });
   } catch (error) {
-    res.status(500).send({ message: "Error al cargar el formulario de edición", error });
+    res
+      .status(500)
+      .send({ message: "Error al cargar el formulario de edición", error });
   }
 };
 
