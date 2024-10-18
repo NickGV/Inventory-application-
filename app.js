@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
 app.get("/", (req, res) => {
-  res.send("welcome to the inventory management system");
+  res.render("home");
 });
 
 app.use("/", categoryRoutes);

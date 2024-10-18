@@ -1,5 +1,7 @@
-const db = require("../models");
-const { Category, Item } = db;
+const db = require('../models');
+const Item = db.Item;
+const Category = db.Category;
+
 exports.getItems = async (req, res) => {
   try {
     const items = await Item.findAll({ include: Category });
@@ -21,7 +23,7 @@ exports.getItem = async (req, res) => {
   }
 };
 
-exports.newItem = async (req, res) => {
+exports.createItemForm = async (req, res) => {
   try {
     const categories = await Category.findAll();
     res.render("items/create", { categories });
@@ -40,7 +42,7 @@ exports.createItem = async (req, res) => {
   }
 };
 
-exports.editItem = async (req, res) => {
+exports.updateItemForm = async (req, res) => {
   try {
     const item = await Item.findByPk(req.params.id);
     const categories = await Category.findAll();
@@ -49,9 +51,7 @@ exports.editItem = async (req, res) => {
     }
     res.render("items/edit", { item, categories });
   } catch (error) {
-    res
-      .status(500)
-      .send({ message: "Error al cargar el formulario de edición", error });
+    res.status(500).send({ message: "Error al cargar el formulario de edición", error });
   }
 };
 
