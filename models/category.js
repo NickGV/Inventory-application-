@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/config');  // Asegúrate de que apunte correctamente a la configuración de la base de datos
+const sequelize = require('./index'); 
 
-const Category = sequelize.define('Category', {
+exports.Category = sequelize.define('Category', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -12,8 +12,7 @@ const Category = sequelize.define('Category', {
     allowNull: false
   }
 }, {
-  tableName: 'categories',  // Asegúrate de que este nombre coincide con el de tu tabla en la base de datos
-  timestamps: false         // Si no tienes columnas de timestamps en tu tabla, asegúrate de deshabilitarlo
+  tableName: 'categories',  
+  timestamps: false         
 });
 
-module.exports = Category;

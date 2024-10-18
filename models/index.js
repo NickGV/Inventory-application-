@@ -1,61 +1,27 @@
-"use strict";
+const { Sequelize } = require('sequelize');
+const config = require('../config/config'); // Importa la configuración
 
-const fs = require("fs");
-const path = require("path");
-const Sequelize = require("sequelize");
-const process = require("process");
-const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "/../config/config.js")[env];
-const db = {};
-
-const Item = require("./item");
-const Category = require("./category");
-
-Item.belongsTo(Category, { foreignKey: "CategoryId" });
-Category.hasMany(Item, { foreignKey: "CategoryId" });
-
-let sequelize;
-if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config);
-} else {
-  sequelize = new Sequelize(
-    config.database,
-    config.username,
-    config.password,
-    config
-  );
-}
-
-fs.readdirSync(__dirname)
-  .filter((file) => {
-    return (
-      file.indexOf(".") !== 0 &&
-      file !== basename &&
-      file.slice(-3) === ".js" &&
-      file.indexOf(".test.js") === -1
-    );
-  })
-  .forEach((file) => {
-    const model = require(path.join(__dirname, file))(
-      sequelize,
-      Sequelize.DataTypes
-    );
-    db[model.name] = model;
-  });
-
-Object.keys(db).forEach((modelName) => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
+// Aquí estás inicializando sequelize con la configuración correcta
+const sequelize = new Sequelize(
+  config.development.database,
+  config.development.username,
+  config.development.password,
+  {
+    host: config.development.host,
+    port: config.development.port,
+    dialect: config.development.dialect // Asegúrate de que el dialecto esté presente aquí
   }
-});
+);
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+const Category = require('./category');
+const Item = require('./item');
+
+// Establece las asociaciones
+Item.belongsTo(Category, { foreignKey: 'CategoryId' });
+Category.hasMany(Item, { foreignKey: 'CategoryId' });
 
 module.exports = {
-  db,
-  Item,
-  Category,
   sequelize,
+  Category,
+  Item
 };
