@@ -1,5 +1,5 @@
-const { Category, Item } = require('./models'); // Asegúrate de importar tus modelos
-const sequelize = require('./models').sequelize;
+const { Category, Item } = require('../../models'); // Asegúrate de importar tus modelos
+const sequelize = require('../../models').sequelize;
 
 async function seedDatabase() {
   try {

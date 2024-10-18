@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     description: {
       type: DataTypes.TEXT,
-      allowNull: true, // Puede ser nulo
+      allowNull: true, 
     },
     price: {
       type: DataTypes.DECIMAL(10, 2),
@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     categoryId: {
       type: DataTypes.INTEGER,
-      allowNull: true, // Puede ser nulo si no está asignado a una categoría
+      allowNull: true,
       references: {
         model: 'Category',
         key: 'id',
@@ -23,10 +23,9 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     tableName: 'items',
-    timestamps: true, // Para asegurar que Sequelize maneje `createdAt` y `updatedAt`
+    timestamps: true,
   });
 
-  // Definir la relación con Category
   Item.associate = function(models) {
     Item.belongsTo(models.Category, {
       foreignKey: 'categoryId',

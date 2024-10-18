@@ -1,7 +1,6 @@
 const Item = require("../models/item");
 const Category = require("../models/category");
 
-// Obtener todos los items
 exports.getItems = async (req, res) => {
   try {
     const items = await Item.findAll({ include: Category });
@@ -11,7 +10,6 @@ exports.getItems = async (req, res) => {
   }
 };
 
-// Obtener un item por ID
 exports.getItem = async (req, res) => {
   try {
     const item = await Item.findByPk(req.params.id, { include: Category });
@@ -24,7 +22,6 @@ exports.getItem = async (req, res) => {
   }
 };
 
-// Mostrar formulario para crear un nuevo item
 exports.newItem = async (req, res) => {
   try {
     const categories = await Category.findAll();
@@ -34,7 +31,6 @@ exports.newItem = async (req, res) => {
   }
 };
 
-// Crear un nuevo item
 exports.createItem = async (req, res) => {
   try {
     const { name, categoryId, description, price } = req.body;
@@ -45,7 +41,6 @@ exports.createItem = async (req, res) => {
   }
 };
 
-// Mostrar formulario para editar un item
 exports.editItem = async (req, res) => {
   try {
     const item = await Item.findByPk(req.params.id);
@@ -61,7 +56,6 @@ exports.editItem = async (req, res) => {
   }
 };
 
-// Actualizar un item por ID
 exports.updateItem = async (req, res) => {
   try {
     const { name, categoryId, description, price } = req.body;
@@ -76,7 +70,6 @@ exports.updateItem = async (req, res) => {
   }
 };
 
-// Eliminar un item por ID
 exports.deleteItem = async (req, res) => {
   try {
     const item = await Item.findByPk(req.params.id);
