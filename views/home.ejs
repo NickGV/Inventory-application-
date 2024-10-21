@@ -1,17 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Management System</title>
-</head>
-<body>
-    <h1>Welcome to the Inventory Management System</h1>
-    <nav>
-        <ul>
-            <li><a href="/items">View Items</a></li>
-            <li><a href="/categories">View Categories</a></li>
-        </ul>
-    </nav>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <h1>Inventory Management</h1>
+
+    <button id="addItemBtn">Add New Item</button>
+
+    <div id="itemFormContainer" style="display: none;">
+      <h2>Add New Item</h2>
+      <form id="addItemForm">
+        <input type="text" name="name" placeholder="Item Name" required />
+        <textarea name="description" placeholder="Description"></textarea>
+        <input type="number" name="price" placeholder="Price" step="0.01" required />
+        <select name="categoryId" id="categorySelect" required>
+          <option value="">Select Category</option>
+          <% categories.forEach(category => { %>
+          <option value="<%= category.id %>"><%= category.name %></option>
+          <% }); %>
+        </select>
+
+        <div id="newCategoryInput">
+          <input type="text" id="newCategoryName" placeholder="New Category Name" />
+          <button type="button" id="addNewCategoryBtn">Add New Category</button>
+        </div>
+
+        <button type="submit">Add Item</button>
+      </form>
+    </div>
+
+    <div id="itemList"></div>
+
+    <script src="/js/script.js"></script>
+  </body>
 </html>

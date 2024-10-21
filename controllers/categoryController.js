@@ -11,6 +11,30 @@ exports.getCategories = async (req, res) => {
   }
 };
 
+exports.newCategory = async (req, res) => {
+  res.render("newCategory");
+};
+
+exports.createCategory = async (req, res) => {
+  console.log('Received request to create category:', req.body);
+  try {
+    const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ error: "Category name is required" });
+    }
+
+    console.log('Attempting to create category with name:', name);
+    const newCategory = await Category.create({ name });
+    console.log('New category created:', newCategory.toJSON());
+
+    res.status(201).json(newCategory);
+  } catch (error) {
+    console.error('Detailed error creating category:', error);
+    res.status(500).json({ error: "Error creating category", details: error.message });
+  }
+};
+
 exports.getCategory = async (req, res) => {
   try {
     const category = await Category.findByPk(req.params.id, {
@@ -19,21 +43,23 @@ exports.getCategory = async (req, res) => {
     if (!category) {
       return res.status(404).send("Categoría no encontrada");
     }
-    res.render("category", { category });
+    res.render("category/show", { category });
   } catch (err) {
     console.error(err);
     res.status(500).send("Error al obtener la categoría");
   }
 };
 
-exports.createCategory = async (req, res) => {
+exports.editCategory = async (req, res) => {
   try {
-    const { name } = req.body;
-    const newCategory = await Category.create({ name });
-    res.redirect("/categories");
+    const category = await Category.findByPk(req.params.id);
+    if (!category) {
+      return res.status(404).send("Categoría no encontrada");
+    }
+    res.render("category/edit", { category });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error al crear la categoría");
+    res.status(500).send("Error al obtener la categoría");
   }
 };
 

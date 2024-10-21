@@ -4,15 +4,11 @@ const Category = db.Category;
 
 exports.getItems = async (req, res) => {
   try {
-    const items = await Item.findAll({
-      include: [{ model: Category, as: "category" }],
-    });
-    res.render("items/index", { items });
+    const items = await Item.findAll({ include: Category });
+
+    res.json(items);
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .send({ message: "Error al obtener los items", error: error.message });
+    res.status(500).json({ message: "Error al obtener los items", error });
   }
 };
 exports.getItem = async (req, res) => {
