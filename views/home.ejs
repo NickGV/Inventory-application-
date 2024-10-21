@@ -5,36 +5,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inventory Management</title>
     <link rel="stylesheet" href="/css/styles.css" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
-  <body>
-    <h1>Inventory Management</h1>
+  <body class="page">
+    <h1 class="page__title">Inventory Management</h1>
 
-    <button id="addItemBtn">Add New Item</button>
+    <button class="button button--primary" id="addItemBtn">Add New Item</button>
 
-    <div id="itemFormContainer" style="display: none;">
-      <h2>Add New Item</h2>
-      <form id="addItemForm">
-        <input type="text" name="name" placeholder="Item Name" required />
-        <textarea name="description" placeholder="Description"></textarea>
-        <input type="number" name="price" placeholder="Price" step="0.01" required />
-        <select name="categoryId" id="categorySelect" required>
-          <option value="">Select Category</option>
+    <div class="form-container" id="itemFormContainer" style="display: none">
+      <form
+        class="form form--add-item"
+        id="addItemForm"
+        action="/items"
+        method="POST"
+      >
+        <h2 class="form__title">Add New Item</h2>
+        <input
+          class="form__input form__input--text"
+          type="text"
+          name="name"
+          placeholder="Item Name"
+          required
+        />
+        <textarea
+          class="form__input form__input--textarea"
+          name="description"
+          placeholder="Description"
+        ></textarea>
+        <input
+          class="form__input form__input--number"
+          type="number"
+          name="price"
+          placeholder="Price"
+          step="0.01"
+          required
+        />
+
+        <select
+          class="form__input form__input--select"
+          name="categoryId"
+          id="categorySelect"
+          required
+        >
+          <option value="selected" selected>Select Category</option>
           <% categories.forEach(category => { %>
           <option value="<%= category.id %>"><%= category.name %></option>
           <% }); %>
+          <option value="">+ Create new category</option>
         </select>
 
-        <div id="newCategoryInput">
-          <input type="text" id="newCategoryName" placeholder="New Category Name" />
-          <button type="button" id="addNewCategoryBtn">Add New Category</button>
+        <div
+          class="form__new-category"
+          id="newCategoryForm"
+          style="display: none"
+        >
+          <input
+            class="form__input form__input--text"
+            type="text"
+            id="newCategoryName"
+            placeholder="New Category Name"
+          />
+          <button
+            class="button button--secondary"
+            type="button"
+            id="addNewCategoryBtn"
+          >
+            Add
+          </button>
         </div>
 
-        <button type="submit">Add Item</button>
+        <button class="button button--submit" type="submit">Add Item</button>
       </form>
     </div>
 
-    <div id="itemList"></div>
+    <div class="item-list" id="itemList">
+      <% items.forEach(item => { %>
+      <div class="item">
+        <h3 class="item__name"><%= item.name %></h3>
+        <p class="item__description"><%= item.description %></p>
+        <p class="item__price"><%= item.price %></p>
+        <button class="button button--edit item__edit" data-id="<%= item.id %>">
+          Edit
+        </button>
+        <button
+          class="button button--delete item__delete"
+          data-id="<%= item.id %>"
+        >
+          Delete
+        </button>
+      </div>
+      <% }); %>
+    </div>
 
     <script src="/js/script.js"></script>
   </body>

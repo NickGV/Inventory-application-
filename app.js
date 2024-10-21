@@ -12,31 +12,30 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.static(path.join(__dirname, "public")));
 
-// Middleware para parsear JSON
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Usa las rutas de categoría
 app.use("/api", categoryRoutes);
 
 app.get("/", async (req, res) => {
   try {
+    const items = await db.Item.findAll();
     const categories = await db.Category.findAll();
-    res.render("home", { categories });
+    res.render("home", { categories, items });
   } catch (error) {
     res.status(500).send("Error loading home page");
   }
 });
-app.use("/api", categoryRoutes);
-app.use("/api", itemRoutes);
+app.use("/", categoryRoutes);
+app.use("/", itemRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
 // Agrega esto después de definir todas tus rutas
-app._router.stack.forEach(function(r){
-  if (r.route && r.route.path){
-    console.log(r.route.method, r.route.path)
+app._router.stack.forEach(function (r) {
+  if (r.route && r.route.path) {
+    console.log(r.route.method, r.route.path);
   }
-})
+});

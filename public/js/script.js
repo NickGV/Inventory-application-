@@ -1,116 +1,59 @@
-$(document).ready(function() {
-  loadItems();
+document.getElementById("addItemBtn").addEventListener("click", function () {
+  const itemFormContainer = document.getElementById("itemFormContainer");
+  itemFormContainer.style.display =
+    itemFormContainer.style.display === "none" ? "block" : "none";
+});
 
-  $('#addItemBtn').click(function() {
-    $('#itemFormContainer').toggle();
+document
+  .getElementById("categorySelect")
+  .addEventListener("change", function () {
+    const newCategoryForm = document.getElementById("newCategoryForm");
+    if (this.value === "") {
+      newCategoryForm.style.display = "flex";
+    } else {
+      newCategoryForm.style.display = "none";
+    }
   });
 
-  $('#addItemForm').submit(function(e) {
-    e.preventDefault();
-    let formData = $(this).serializeArray();
-    
-    $.ajax({
-      url: '/items',
-      method: 'POST',
-      data: $.param(formData),
-      success: function(response) {
-        $('#itemFormContainer').hide();
-        $('#addItemForm')[0].reset();
-        loadItems();
-      },
-      error: function (error) {
-        console.error('Error creating item:', error);
-        alert('Error creating item. Please try again.');
-      }
-    });
-  });
+document
+  .getElementById("addNewCategoryBtn")
+  .addEventListener("click", function () {
+    const newCategoryName = document
+      .getElementById("newCategoryName")
+      .value.trim();
 
-  function createItem(formData) {
-    $.ajax({
-      url: '/items',
-      method: 'POST',
-      data: $.param(formData),
-      success: function(response) {
-        $('#itemFormContainer').hide();
-        $('#addItemForm')[0].reset();
-        $('#newCategoryInput').hide();
-        loadItems();
-        updateCategorySelect();
-      },
-      error: function (error) {
-        console.error('Error creating item:', error);
-      }
-    });
-  }
-
-  function loadItems() {
-    $.ajax({
-      url: '/api/items',
-      method: 'GET',
-      success: function(items) {
-        let itemsHtml = '';
-        items.forEach(item => {
-          itemsHtml += `
-            <div>
-              <h3>${item.name}</h3>
-              <p>${item.description}</p>
-              <p>Price: $${item.price}</p>
-              <p>Category: ${item.category.name}</p>
-            </div>
-          `;
-        });
-        $('#itemList').html(itemsHtml);
-      },
-      error: function(error) {
-        console.error('Error loading items:', error);
-      }
-    });
-  }
-
-  function updateCategorySelect() {
-    $.ajax({
-      url: '/api/categories',
-      method: 'GET',
-      success: function(categories) {
-        let categoryOptions = '';
-        categories.forEach(category => {
-          categoryOptions += `<option value="${category.id}">${category.name}</option>`;
-        });
-        $('#categorySelect').html(categoryOptions);
-      },
-      error: function(error) {
-        console.error('Error loading categories:', error);
-      }
-    });
-  }
-
-  $('#showNewCategoryInput').click(function() {
-    $('#newCategoryInput').toggle();
-  });
-
-  $('#addNewCategoryBtn').click(function() {
-    let newCategoryName = $('#newCategoryName').val().trim();
-    if (!newCategoryName) {
+    if (newCategoryName === "") {
       alert("Please enter a name for the new category");
       return;
     }
-    
-    $.ajax({
-      url: '/api/categories',  // Esta URL debe coincidir con la definida en tus rutas
-      method: 'POST',
-      data: JSON.stringify({ name: newCategoryName }),
-      contentType: 'application/json',
-      dataType: 'json',
-      success: function(newCategory) {
-        console.log('New category created:', newCategory);
-        $('#categorySelect').append(`<option value="${newCategory.id}">${newCategory.name}</option>`);
-        $('#categorySelect').val(newCategory.id);
-        $('#newCategoryName').val('');
+
+    fetch("/api/categories", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      error: function(jqXHR, textStatus, errorThrown) {
-        console.error('Error creating category:', jqXHR.responseText);
-        alert('Error creating category: ' + (jqXHR.responseJSON?.error || 'Please try again.'));
-      }
-    });
+      body: JSON.stringify({ name: newCategoryName }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((newCategory) => {
+        const categorySelect = document.getElementById("categorySelect");
+        const option = document.createElement("option");
+        option.value = newCategory.id;
+        option.textContent = newCategory.name;
+        categorySelect.appendChild(option);
+
+        categorySelect.value = newCategory.id;
+
+        document.getElementById("newCategoryForm").style.display = "none";
+        document.getElementById("newCategoryName").value = "";
+      })
+      .catch((error) => {
+        console.error("Error creating category:", error);
+        alert("Error creating category. Please try again.");
+      });
   });
-});
