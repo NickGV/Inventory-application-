@@ -44,6 +44,7 @@ h2 {
   margin: 10px 0;
   text-align: center;
   cursor: pointer;
+  width: 200px;
 }
 
 .button--primary {
@@ -92,7 +93,7 @@ h2 {
   gap: 10px;
   align-items: center;
 }
-/* Estilo para la tabla de items */
+
 .item-table {
   width: 100%;
   border-collapse: collapse;
@@ -127,11 +128,13 @@ h2 {
 .button--edit {
   background-color: #3498db;
   color: white;
+  width: 100%;
 }
 
 .button--delete {
   background-color: #e74c3c;
   color: white;
+  width: 100%;
 }
 
 .button--edit:hover {
@@ -150,4 +153,28 @@ h2 {
   .button {
     width: 100%;
   }
+}
+
+#toggleCategoriesBtn {
+  margin-bottom: 10px;
+}
+
+#categoryList {
+  list-style-type: none;
+  padding: 0;
+}
+
+#categoryList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+
+#categoryList li button {
+  padding: 5px 10px;
+  margin-left: 10px;
 }
