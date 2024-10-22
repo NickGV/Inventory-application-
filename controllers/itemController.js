@@ -11,6 +11,7 @@ exports.getItems = async (req, res) => {
     res.status(500).json({ message: "Error al obtener los items", error });
   }
 };
+
 exports.getItem = async (req, res) => {
   try {
     const item = await Item.findByPk(req.params.id, { include: Category });
@@ -23,37 +24,13 @@ exports.getItem = async (req, res) => {
   }
 };
 
-exports.createItemForm = async (req, res) => {
-  try {
-    const categories = await Category.findAll();
-    res.render("items/create", { categories });
-  } catch (error) {
-    res.status(500).send({ message: "Error al cargar el formulario", error });
-  }
-};
-
 exports.createItem = async (req, res) => {
   try {
     const { name, categoryId, description, price } = req.body;
     const newItem = await Item.create({ name, categoryId, description, price });
-    res.redirect(`/items/${newItem.id}`);
+    res.redirect("home");
   } catch (error) {
     res.status(500).send({ message: "Error al crear el item", error });
-  }
-};
-
-exports.updateItemForm = async (req, res) => {
-  try {
-    const item = await Item.findByPk(req.params.id);
-    const categories = await Category.findAll();
-    if (!item) {
-      return res.status(404).send({ message: "Item no encontrado" });
-    }
-    res.render("items/edit", { item, categories });
-  } catch (error) {
-    res
-      .status(500)
-      .send({ message: "Error al cargar el formulario de edición", error });
   }
 };
 
@@ -65,7 +42,7 @@ exports.updateItem = async (req, res) => {
       return res.status(404).send({ message: "Item no encontrado" });
     }
     await item.update({ name, categoryId, description, price });
-    res.redirect(`/items/${item.id}`);
+    res.redirect(`/home`);
   } catch (error) {
     res.status(500).send({ message: "Error al actualizar el item", error });
   }
@@ -78,7 +55,7 @@ exports.deleteItem = async (req, res) => {
       return res.status(404).send({ message: "Item no encontrado" });
     }
     await item.destroy();
-    res.redirect("/items");
+    res.redirect("/home");
   } catch (error) {
     res.status(500).send({ message: "Error al eliminar el item", error });
   }
