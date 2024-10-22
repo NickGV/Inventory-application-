@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/css/styles.css" />
   </head>
   <body class="page">
+    <div></div>
     <h1 class="page__title">Inventory Management</h1>
 
     <button class="button button--primary" id="addItemBtn">Add New Item</button>
@@ -78,22 +79,41 @@
     </div>
 
     <div class="item-list" id="itemList">
-      <% items.forEach(item => { %>
-      <div class="item">
-        <h3 class="item__name"><%= item.name %></h3>
-        <p class="item__description"><%= item.description %></p>
-        <p class="item__price"><%= item.price %></p>
-        <button class="button button--edit item__edit" data-id="<%= item.id %>">
-          Edit
-        </button>
-        <button
-          class="button button--delete item__delete"
-          data-id="<%= item.id %>"
-        >
-          Delete
-        </button>
-      </div>
-      <% }); %>
+      <table class="item-table">
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(item => { %>
+          <tr class="item">
+            <td class="item__name"><%= item.name %></td>
+            <td class="item__description"><%= item.description %></td>
+            <td class="item__price"><%= item.price %></td>
+            <td class="item__actions">
+              <button
+                class="button button--edit item__edit"
+                data-id="<%= item.id %>"
+                id="editItemBtn"
+              >
+                Edit
+              </button>
+              <button
+                class="button button--delete item__delete"
+                data-id="<%= item.id %>"
+                id="deleteItemBtn"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
     </div>
 
     <script src="/js/script.js"></script>
