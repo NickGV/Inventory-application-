@@ -2,8 +2,22 @@ document.getElementById("addItemBtn").addEventListener("click", toggleItemForm);
 
 function toggleItemForm() {
   const itemFormContainer = document.getElementById("itemFormContainer");
-  itemFormContainer.style.display =
-    itemFormContainer.style.display === "none" ? "block" : "none";
+  const addItemForm = document.getElementById("addItemForm");
+  const submitButton = addItemForm.querySelector('button[type="submit"]');
+
+  if (itemFormContainer.style.display === "none") {
+    itemFormContainer.style.display = "block";
+  } else {
+    itemFormContainer.style.display = "none";
+    addItemForm.reset();
+    addItemForm.action = "/items";
+    addItemForm.method = "POST";
+    submitButton.textContent = "Add Item";
+    const methodInput = addItemForm.querySelector('input[name="_method"]');
+    if (methodInput) {
+      methodInput.remove();
+    }
+  }
 }
 
 document
@@ -182,4 +196,40 @@ function deleteItem(itemId) {
     console.alert("Item deleted");
     window.location.href = "";
   });
+}
+
+// Add this event listener for edit buttons
+document.querySelectorAll("#editItemBtn").forEach((editItemBtn) => {
+  editItemBtn.addEventListener("click", () => editItem(editItemBtn.dataset.id));
+});
+
+function editItem(itemId) {
+  fetch(`/items/${itemId}`)
+    .then((response) => response.json())
+    .then((item) => {
+      const form = document.getElementById("addItemForm");
+      form.action = `/items/${itemId}`;
+      form.method = "POST";
+
+      document.querySelector('input[name="name"]').value = item.name;
+      document.querySelector('textarea[name="description"]').value = item.description;
+      document.querySelector('input[name="price"]').value = item.price;
+      document.querySelector('select[name="categoryId"]').value = item.Category ? item.Category.id : '';
+
+      const submitButton = form.querySelector('button[type="submit"]');
+      submitButton.textContent = "Update Item";
+
+      // Add a hidden input for the PUT method
+      const methodInput = document.createElement('input');
+      methodInput.type = 'hidden';
+      methodInput.name = '_method';
+      methodInput.value = 'PUT';
+      form.appendChild(methodInput);
+
+      document.getElementById("itemFormContainer").style.display = "block";
+    })
+    .catch((error) => {
+      console.error("Error fetching item details:", error);
+      alert("Error fetching item details. Please try again.");
+    });
 }
