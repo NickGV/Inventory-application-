@@ -97,7 +97,7 @@
         </thead>
         <tbody>
           <% items.forEach(item => { %>
-          <tr class="item">
+          <tr class="item" data-id="<%= item.id %>">
             <td class="item__name"><%= item.name %></td>
             <td class="item__description"><%= item.description %></td>
             <td class="item__price"><%= item.price %></td>

@@ -107,7 +107,6 @@ function editCategory(categoryId) {
     })
       .then((response) => response.json())
       .then((updatedCategory) => {
-        // Update the category name in the select and list
         const option = document.querySelector(
           `#categorySelect option[value="${categoryId}"]`
         );
@@ -131,7 +130,6 @@ function deleteCategory(categoryId) {
     })
       .then((response) => response.json())
       .then(() => {
-        // Remove the category from the select and list
         const option = document.querySelector(
           `#categorySelect option[value="${categoryId}"]`
         );
@@ -148,7 +146,6 @@ function deleteCategory(categoryId) {
   }
 }
 
-// Add this new function
 function toggleCategoryList() {
   const categoryList = document.getElementById("categoryList");
   const toggleButton = document.getElementById("toggleCategoriesBtn");
@@ -162,12 +159,10 @@ function toggleCategoryList() {
   }
 }
 
-// Add this event listener
 document
   .getElementById("toggleCategoriesBtn")
   .addEventListener("click", toggleCategoryList);
 
-// Modify the DOMContentLoaded event listener
 document.addEventListener("DOMContentLoaded", function () {
   fetch("/categories")
     .then((response) => response.json())
@@ -193,43 +188,74 @@ function deleteItem(itemId) {
   fetch(`/items/${itemId}`, {
     method: "DELETE",
   }).then((response) => {
-    console.alert("Item deleted");
     window.location.href = "";
   });
 }
 
-// Add this event listener for edit buttons
 document.querySelectorAll("#editItemBtn").forEach((editItemBtn) => {
   editItemBtn.addEventListener("click", () => editItem(editItemBtn.dataset.id));
 });
 
 function editItem(itemId) {
-  fetch(`/items/${itemId}`)
-    .then((response) => response.json())
-    .then((item) => {
-      const form = document.getElementById("addItemForm");
-      form.action = `/items/${itemId}`;
-      form.method = "POST";
+  const addItemForm = document.getElementById("addItemForm");
+  const submitButton = addItemForm.querySelector('button[type="submit"]');
 
-      document.querySelector('input[name="name"]').value = item.name;
-      document.querySelector('textarea[name="description"]').value = item.description;
-      document.querySelector('input[name="price"]').value = item.price;
-      document.querySelector('select[name="categoryId"]').value = item.Category ? item.Category.id : '';
+  getItemById(itemId).then((item) => {
+    addItemForm.onsubmit = function(e) {
+      e.preventDefault();
+      updateItem(itemId);
+    };
 
-      const submitButton = form.querySelector('button[type="submit"]');
-      submitButton.textContent = "Update Item";
+    submitButton.textContent = "Update Item";
 
-      // Add a hidden input for the PUT method
-      const methodInput = document.createElement('input');
-      methodInput.type = 'hidden';
-      methodInput.name = '_method';
-      methodInput.value = 'PUT';
-      form.appendChild(methodInput);
+    document.getElementById("itemFormContainer").style.display = "block";
+    document.getElementById("nameInput").value = item.name;
+    document.getElementById("categorySelect").value = item.categoryId;
+    document.getElementById("descriptionInput").value = item.description;
+    document.getElementById("priceInput").value = item.price;
+  });
+}
 
-      document.getElementById("itemFormContainer").style.display = "block";
+function getItemById(itemId) {
+  return fetch(`/items/${itemId}`, {
+    method: "GET",
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      return response.json();
     })
     .catch((error) => {
       console.error("Error fetching item details:", error);
-      alert("Error fetching item details. Please try again.");
+    });
+}
+
+function updateItem(itemId) {
+  const formData = new FormData(document.getElementById("addItemForm"));
+  const data = Object.fromEntries(formData.entries());
+
+  fetch(`/items/${itemId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.json())
+    .then((updatedItem) => {
+      const itemRow = document.querySelector(`tr[data-id="${itemId}"]`);
+      if (itemRow) {
+        itemRow.querySelector(".item__name").textContent = updatedItem.name;
+        itemRow.querySelector(".item__description").textContent = updatedItem.description;
+        itemRow.querySelector(".item__price").textContent = updatedItem.price;
+      }
+  
+      document.getElementById("addItemForm").reset();
+      document.getElementById("itemFormContainer").style.display = "none";
+    })
+    .catch((error) => {
+      console.error("Error updating item:", error);
+      alert("Error updating item. Please try again.");
     });
 }
