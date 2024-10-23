@@ -1,9 +1,0 @@
-<h1>Item: <%= item.name %></h1>
-<p>Price: <%= item.price %></p>
-<p>Description: <%= item.description %></p>
-<p>Category: <%= item.Category ? item.Category.name : 'N/A' %></p>
-<a href="/items/<%= item.id %>/edit">Editar</a>
-<form action="/items/<%= item.id %>?_method=DELETE" method="POST">
-  <button type="submit">Eliminar</button>
-</form>
-<a href="/items">Volver a la lista</a>

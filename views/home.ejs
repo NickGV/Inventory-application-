@@ -1,17 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inventory Management System</title>
-</head>
-<body>
-    <h1>Welcome to the Inventory Management System</h1>
-    <nav>
-        <ul>
-            <li><a href="/items">View Items</a></li>
-            <li><a href="/categories">View Categories</a></li>
-        </ul>
-    </nav>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="page">
+    <div></div>
+    <h1 class="page__title">Inventory Management</h1>
+
+    <button class="button button--primary" id="addItemBtn">Add New Item</button>
+
+    <div class="form-container" id="itemFormContainer" style="display: none">
+      <form
+        class="form form--add-item"
+        id="addItemForm"
+        action="/items"
+        method="POST"
+      >
+        <h2 class="form__title">Add New Item</h2>
+        <input
+          class="form__input form__input--text"
+          type="text"
+          name="name"
+          id="nameInput"
+          placeholder="Item Name"
+          required
+        />
+        <textarea
+          class="form__input form__input--textarea"
+          name="description"
+          id="descriptionInput"
+          placeholder="Description"
+        ></textarea>
+        <input
+          class="form__input form__input--number"
+          type="number"
+          name="price"
+          id="priceInput"
+          placeholder="Price"
+          step="0.01"
+          required
+        />
+
+        <select
+          class="form__input form__input--select"
+          name="categoryId"
+          id="categorySelect"
+          required
+        >
+          <option value="selected" selected>Select Category</option>
+          <% categories.forEach(category => { %>
+          <option value="<%= category.id %>"><%= category.name %></option>
+          <% }); %>
+          <option value="">+ Create new category</option>
+        </select>
+
+        <div
+          class="form__new-category"
+          id="newCategoryForm"
+          style="display: none"
+        >
+          <input
+            class="form__input form__input--text"
+            type="text"
+            id="newCategoryName"
+            placeholder="New Category Name"
+          />
+          <button
+            class="button button--secondary"
+            type="button"
+            id="addNewCategoryBtn"
+          >
+            Add
+          </button>
+        </div>
+
+        <button class="button button--submit" type="submit">Add Item</button>
+      </form>
+    </div>
+
+    <h3>Categories</h3>
+    <button id="toggleCategoriesBtn" class="button button--secondary">Show Categories</button>
+    <ul id="categoryList" style="display: none;"></ul>
+
+    <div class="item-list" id="itemList">
+      <table class="item-table">
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% items.forEach(item => { %>
+          <tr class="item" data-id="<%= item.id %>">
+            <td class="item__name"><%= item.name %></td>
+            <td class="item__description"><%= item.description %></td>
+            <td class="item__price"><%= item.price %></td>
+            <td class="item__actions">
+              <button
+                class="button button--edit item__edit"
+                data-id="<%= item.id %>"
+                id="editItemBtn"
+              >
+                Edit
+              </button>
+              <button
+                class="button button--delete item__delete"
+                data-id="<%= item.id %>"
+                id="deleteItemBtn"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+    <script src="/js/script.js"></script>
+  </body>
 </html>

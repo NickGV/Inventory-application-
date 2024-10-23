@@ -4,36 +4,24 @@ const { Category } = db;
 exports.getCategories = async (req, res) => {
   try {
     const categories = await Category.findAll();
-    res.render("categories", { categories });
+    res.json(categories);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error al obtener las categorías");
-  }
-};
-
-exports.getCategory = async (req, res) => {
-  try {
-    const category = await Category.findByPk(req.params.id, {
-      include: "items",
-    });
-    if (!category) {
-      return res.status(404).send("Categoría no encontrada");
-    }
-    res.render("category", { category });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error al obtener la categoría");
+    res.status(500).json({ error: "Error fetching categories" });
   }
 };
 
 exports.createCategory = async (req, res) => {
   try {
     const { name } = req.body;
+    if (!name) {
+      return res.status(400).json({ error: "Category name is required" });
+    }
     const newCategory = await Category.create({ name });
-    res.redirect("/categories");
+    res.status(201).json(newCategory);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error al crear la categoría");
+    console.error("Error creating category:", err);
+    res.status(500).json({ error: `Error creating category: ${err.message}` });
   }
 };
 
@@ -42,13 +30,13 @@ exports.updateCategory = async (req, res) => {
     const { name } = req.body;
     const category = await Category.findByPk(req.params.id);
     if (!category) {
-      return res.status(404).send("Categoría no encontrada");
+      return res.status(404).json({ error: "Category not found" });
     }
     await category.update({ name });
-    res.redirect("/categories");
+    res.json(category);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error al actualizar la categoría");
+    console.error("Error updating category:", err);
+    res.status(500).json({ error: `Error updating category: ${err.message}` });
   }
 };
 
@@ -56,12 +44,12 @@ exports.deleteCategory = async (req, res) => {
   try {
     const category = await Category.findByPk(req.params.id);
     if (!category) {
-      return res.status(404).send("Categoría no encontrada");
+      return res.status(404).json({ error: "Category not found" });
     }
     await category.destroy();
-    res.redirect("/categories");
+    res.json({ message: "Category deleted successfully" });
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Error al eliminar la categoría");
+    console.error("Error deleting category:", err);
+    res.status(500).json({ error: `Error deleting category: ${err.message}` });
   }
 };
